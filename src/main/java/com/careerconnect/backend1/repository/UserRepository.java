@@ -1,8 +1,9 @@
 package com.careerconnect.backend1.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.careerconnect.backend1.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByEmail(String email);
+
+    User findByEmail(String email); // ✅ important
 }

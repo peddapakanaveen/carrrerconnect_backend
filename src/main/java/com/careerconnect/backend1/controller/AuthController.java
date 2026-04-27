@@ -1,32 +1,53 @@
 package com.careerconnect.backend1.controller;
 
+import com.careerconnect.backend1.model.User;
+import com.careerconnect.backend1.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/auth")
 public class AuthController {
 
+    @Autowired
+    private UserService userService;
+
+    // ✅ SIGNUP
+    @PostMapping("/signup")
+    public User signup(@RequestBody User user) {
+
+        System.out.println("Signup Email: " + user.getEmail());
+
+        if (user.getEmail() == null || user.getPassword() == null) {
+            throw new RuntimeException("Email or password cannot be empty");
+        }
+
+        return userService.saveUser(user);
+    }
+
+    // ✅ LOGIN (MULTIPLE USERS SUPPORT)
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> user) {
+    public User login(@RequestBody User user) {
 
-        String email = user.get("email");
-        String password = user.get("password");
+        System.out.println("Login Email: " + user.getEmail());
 
-        // ✅ Null safety check (VERY IMPORTANT)
-        if (email == null || password == null) {
-            throw new RuntimeException("Email or password is missing");
+        if (user.getEmail() == null || user.getPassword() == null) {
+            throw new RuntimeException("Email or password missing");
         }
 
-        // ✅ Simple login check
-        if (email.equals("test@gmail.com") && password.equals("1234")) {
-            return Map.of(
-                "name", "Sasi",
-                "email", email
-            );
+        // ✅ FETCH USER FROM DATABASE
+        User existingUser = userService.findByEmail(user.getEmail());
+
+        if (existingUser == null) {
+            throw new RuntimeException("User not found");
         }
 
-        throw new RuntimeException("Invalid credentials");
+        if (!existingUser.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException("Wrong password");
+        }
+
+        return existingUser; // ✅ ANY USER CAN LOGIN
     }
 }

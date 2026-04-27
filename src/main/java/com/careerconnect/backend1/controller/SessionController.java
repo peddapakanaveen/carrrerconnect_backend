@@ -1,25 +1,44 @@
 package com.careerconnect.backend1.controller;
 
+import com.careerconnect.backend1.model.Session;
+import com.careerconnect.backend1.service.SessionService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/sessions")
 public class SessionController {
 
-    private List<Map<String, String>> sessions = new ArrayList<>();
+    @Autowired
+    private SessionService sessionService;
 
-    // ✅ Book Session
+    // ✅ 1. SAVE SESSION (your existing feature)
     @PostMapping
-    public Map<String, String> bookSession(@RequestBody Map<String, String> data) {
-        sessions.add(data);
-        return Map.of("message", "Session booked successfully");
+    public Session createSession(@RequestBody Session session) {
+        System.out.println("Saving session: " + session.getName());
+        return sessionService.saveSession(session);
     }
 
-    // ✅ Get All Sessions
+    // ✅ 2. GET ALL SESSIONS (NEW)
     @GetMapping
-    public List<Map<String, String>> getSessions() {
-        return sessions;
+    public List<Session> getAllSessions() {
+        return sessionService.getAllSessions();
+    }
+
+    // ✅ 3. GET SESSIONS BY NAME (NEW)
+    @GetMapping("/user/{name}")
+    public List<Session> getSessionsByName(@PathVariable String name) {
+        return sessionService.getSessionsByName(name);
+    }
+
+    // ✅ 4. DELETE ALL SESSIONS (FOR TESTING)
+    @DeleteMapping("/all")
+    public String deleteAllSessions() {
+        sessionService.deleteAllSessions();
+        return "All sessions deleted successfully";
     }
 }
