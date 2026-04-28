@@ -15,19 +15,19 @@ public class SessionController {
     @Autowired
     private SessionRepository repo;
 
-    // TEST API (very important)
+    // ✅ TEST API (for Railway check)
     @GetMapping("/test")
     public String test() {
         return "Backend is working";
     }
 
-    // SAVE
+    // ✅ SAVE SESSION
     @PostMapping
     public Session saveSession(@RequestBody Session session) {
         return repo.save(session);
     }
 
-    // GET ALL
+    // ✅ GET ALL SESSIONS
     @GetMapping
     public List<Session> getAllSessions() {
         return repo.findAll();
